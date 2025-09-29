@@ -6,10 +6,10 @@
                 <el-col :span="14">
                 名称
                 </el-col>
-                <el-col :span="4">
+                <el-col :span="3">
                 大小
                 </el-col> 
-                <el-col :span="6" v-if="$store.state.user.is_login">
+                <el-col :span="7" v-if="$store.state.user.is_login">
                 <el-button type="warning" plain @click="newDialogVisible = true;"><el-icon  class="el-icon--left"><FolderAdd /></el-icon>新建文件夹</el-button>
                 <el-button type="success" plain @click="uploadFileVisible = true;"><el-icon  class="el-icon--left"><Upload /></el-icon>上传文件</el-button>
                 </el-col>
@@ -24,10 +24,10 @@
                 <span v-if="(!folder.update_name)">{{folder.name}}</span>
                 <el-input v-else v-model="folder.name" style="width: 80%;" @click.stop/>
                 </el-col>
-                <el-col :span="4" class="folder-item-size">
+                <el-col :span="3" class="folder-item-size">
                 {{folder.size}}
                 </el-col>
-                <el-col :span="6" v-if="$store.state.user.is_login">
+                <el-col :span="7" v-if="$store.state.user.is_login">
                 <el-row class="row-bg" justify="center">
                     <el-col :span="5">
                         <el-button type="primary"  circle v-if="!folder.update_name" @click.stop="update_folder_name(folder)">
@@ -117,7 +117,22 @@
                     </div>
                 </template>
                 <hr>
-                    上传文件
+                    <el-upload
+                        class="upload-demo"
+                        drag
+                        action="https://blog.superpea.top/cloud/file/upload/upload_file/" 
+                        headers=""
+                        multiple
+                        :data="get_upload_data"
+                        :on-success="upload_success"
+                        :on-error="upload_error"
+                    >
+                        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+                        <div class="el-upload__text">
+                        将文件拖到此处或<em>点击上传</em>
+                        </div>
+                    </el-upload>
+                    <p class="error_message">{{ error_message }}</p>
                 <hr>
                 <template #footer>
                     <div class="dialog-footer">
@@ -138,9 +153,13 @@ import $ from 'jquery'
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { UploadFilled } from '@element-plus/icons-vue'
 
 export default {
     name: "FolderView", // 文件夹
+    components: {
+        UploadFilled,
+    },
     props: ["foldersCountent", "currentFolderIdCountent"],
     setup(props, context) {
         let route = useRoute();
@@ -152,6 +171,7 @@ export default {
         let newFolderName = ref("");
         let newDialogVisible = ref(false);
         let uploadFileVisible = ref(false);
+        let uploadData = ref({"folder_id": currentFolderId.value});
         let error_message = ref("");
 
         let file_type_svg = {
@@ -234,6 +254,26 @@ export default {
             })
         }
 
+        const get_upload_data = () => {
+            return {"folder_id": currentFolderId.value}
+        }
+
+        const upload_error = (resp) => {
+                console.log(resp);
+            error_message.value = resp.result;
+        }
+
+        const upload_success = (resp) => {
+                console.log(resp, uploadData.value, currentFolderId.value);
+            error_message.value = "";
+            if (resp.result === "success") {
+                uploadFileVisible.value = false;
+                context.emit("refresh_page");
+            } else {
+                error_message.value = resp.result;
+            }
+        }
+
         return {
             folders,
             deleteFolder,
@@ -241,12 +281,16 @@ export default {
             newFolderName,
             newDialogVisible,
             uploadFileVisible,
+            uploadData,
             file_type_svg,
             error_message,
             to_folder,
             delete_folder,
             new_folder,
             update_folder_name,
+            upload_error,
+            upload_success,
+            get_upload_data,
         }
     }
 }

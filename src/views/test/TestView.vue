@@ -19,10 +19,12 @@
   <el-upload
     class="upload-demo"
     drag
-    action="" 
+    action="https://blog.superpea.top/cloud/file/upload/upload_file/" 
     headers=""
     multiple
-    :on-error="upload_error1()"
+    :data=data
+    :on-success="upload_success"
+    :on-error="upload_error1"
   >
     <el-icon class="el-icon--upload"><upload-filled /></el-icon>
     <div class="el-upload__text">
@@ -38,19 +40,26 @@
 
 <script>
 import { UploadFilled } from '@element-plus/icons-vue'
+import {ref} from 'vue'
 
 export default {
     components: {
         UploadFilled,
     },
     setup() {
-        const upload_error1 = () => {
-            console.log("上传失败");
-            
+      let data = ref({"folder_id": 6});
+        const upload_error1 = (resp) => {
+            console.log("上传失败", resp);
+        }
+
+        const upload_success = (resp) => {
+          console.log(resp);
         }
 
         return {
-            upload_error1
+          data,
+          upload_error1,
+          upload_success,
         }
     }
 }
