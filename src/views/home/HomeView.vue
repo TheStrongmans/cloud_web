@@ -133,9 +133,6 @@ export default {
     }]);
 
     const get_folders = () => {
-        // let data = {"folder_path": "/home/豌豆/PC/壁纸",
-        //   // "folder_path": (route.path == "/" ? "/home" : route.path),
-        // };
         let data = {
           "folder_paths": paths.value,
         };
