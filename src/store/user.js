@@ -1,17 +1,116 @@
-
+import $ from 'jquery'
 
 export default {
   state: {  
-    is_login: true,
-    username: "向前向前向前",
-    photo: "https://cdn.acwing.com/media/user/profile/photo/198660_sm_a3b1662c40.png",
-
+    refresh: "",
+    access: "",
+    is_login: false,
+    username: "",
+    photo: "",
+    getAccessTimer: null,
   },
   getters: {
   },
   mutations: {
+    updateUserInfo(state, user) {
+      state.username = user.name;
+      state.photo = user.photo;
+    },
+    updateRefresh(state, refresh) {
+      state.refresh = refresh;
+    },
+    updateAccess(state, access) {
+      state.access = access;
+      
+    },
+    login(state, data) {
+      state.refresh = data.refresh;
+      state.access = data.access;
+      state.is_login = true;
+    },
+    logout(state) {
+      state.refresh = "";
+      state.access = "";
+      state.is_login = "";
+      state.username = "";
+      state.photo = "";
+    },
+    updateGetAccessTimer(state, timer) {
+      state.getAccessTimer = timer;
+    },
   },
   actions: {
+    login(context, data) {
+      $.ajax({
+          url: "https://blog.superpea.top/api/token/",
+          type: "post",
+          data: {
+              username: data.username,
+              password: data.password,
+          },
+          success(resp) {
+            localStorage.setItem("cloud_jwt_refresh_token", resp.refresh);
+            context.commit("login", resp);
+            context.dispatch("startGetAccessTimer");
+            context.dispatch("getUserInfo");
+            data.success(resp);
+          },
+          error(resp) {
+              data.error(resp);
+          }
+      });
+    },
+    getUserInfo(context) {
+            console.log("userinfo ");
+      $.ajax({
+        url: "https://blog.superpea.top/cloud/user/getinfo/",
+        type: "get",
+        headers: {
+            "Authorization": "Bearer " + context.state.access,
+        },
+        success(resp) {
+          
+          if (resp.result === "success") {
+            context.commit("updateUserInfo", resp);
+            console.log("userinfo ", resp);
+            
+          }
+        }
+      })
+    },
+    startGetAccessTimer(context) {
+      context.commit("updateGetAccessTimer", (setInterval(() => {
+        context.dispathch("getAccess", {
+          success(resp) {
+            context.commit("updateAccess", resp.access);
+          }
+        })
+      }, 270000)))
+    },
+    getAccess(context, data) {
+      $.ajax({
+          url: "https://blog.superpea.top/api/token/refresh/",
+          type: "post",
+          data: {
+              refresh: context.state.refresh,
+          },
+          success(resp) {
+              data.success(resp);
+          },
+          error() {
+              context.dispatch("logout");
+              data.error();
+          }
+      })
+    },
+    logout(context) {
+      context.commit("logout");
+      localStorage.removeItem("cloud_jwt_refresh_token");
+      if(context.state.getAccessTimer !== null) {
+        clearInterval(context.state.getAccessTimer);
+        context.commit("updateGetAccessTimer", null);
+      }
+    }
   },
   modules: {
   }

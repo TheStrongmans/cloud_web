@@ -30,6 +30,23 @@
                 <el-col :span="7" v-if="$store.state.user.is_login">
                 <el-row class="row-bg" justify="center">
                     <el-col :span="5">
+                        <el-button 
+                        type="primary"  
+                        circle 
+                        v-if="!folder.hide" 
+                        @click.stop="hide_folder(folder)" 
+                        link>
+                            <el-icon><View /></el-icon>
+                        </el-button>
+                        <el-button 
+                        type="primary"  
+                        circle v-else 
+                        @click.stop="hide_folder(folder)" 
+                        link>
+                            <el-icon><Hide /></el-icon>
+                        </el-button>
+                    </el-col>
+                    <el-col :span="5">
                         <el-button type="primary"  circle v-if="!folder.update_name" @click.stop="update_folder_name(folder)">
                             <el-icon><Edit /></el-icon>
                         </el-button>
@@ -151,6 +168,7 @@
 <script>
 import $ from 'jquery'
 import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
@@ -165,6 +183,7 @@ export default {
     setup(props, context) {
         let route = useRoute();
         let router = useRouter();
+        let store = useStore();
         let folders = computed(() => { return props.foldersCountent; });
         let currentFolderId = computed(() => { return props.currentFolderIdCountent });
         let deleteFolder = ref();
@@ -219,10 +238,13 @@ export default {
             error_message.value = "";
             $.ajax({
                 url: "https://blog.superpea.top/cloud/folder/new_folder/",
-                type: "get",
+                type: "post",
                 data: {
                     "current_folder_id": currentFolderId.value,
                     "name": newFolderName.value,
+                },
+                headers: {
+                    "Authorization": "Bearer " + store.state.user.access,
                 },
                 success(resp) {
                     if (resp.result === "success") {
@@ -243,6 +265,26 @@ export default {
             })
         }
 
+        const hide_folder = (folder) => {
+            $.ajax({
+                url: "https://blog.superpea.top/cloud/folder/hide_folder/",
+                type: "post",
+                data: {
+                    id: folder.id,
+                    type: folder.type,
+                    hide: !folder.hide,
+                },
+                headers: {
+                    "Authorization": "Bearer " + store.state.user.access,
+                },
+                success(resp) {
+                    if (resp.result === "success") {
+                        context.emit("refresh_page");
+                    }
+                },
+            })
+        }
+
         const update_folder_name = (folder) => {
             if (! folder.update_name) {
                 for (let temp of folders.value) {
@@ -252,16 +294,19 @@ export default {
                 return ;
             }
             let data = {
-                    "type_id": folder.type_id,
-                    "id": folder.id,
-                    "name": folder.name,
-                }
+                "type_id": folder.type_id,
+                "id": folder.id,
+                "name": folder.name,
+            }
+            console.log(data)
             $.ajax({
                 url: "https://blog.superpea.top/cloud/folder/update_folder_name/",
-                type: "get",
+                type: "post",
                 data: data,
+                headers: {
+                    "Authorization": "Bearer " + store.state.user.access,
+                },
                 success(resp) {
-            console.log("update_folder_name", data,resp)
                     if (resp.result === "success") {
                         context.emit("refresh_page");
                         open_message("success", resp.result);
@@ -306,6 +351,7 @@ export default {
             open_delete_dialog,
             delete_folder,
             new_folder,
+            hide_folder,
             update_folder_name,
             upload_error,
             upload_success,

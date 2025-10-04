@@ -14,11 +14,11 @@
       />
       <span class="title">豌豆云</span>
     </el-menu-item>
-    <el-menu-item>
+    <el-menu-item  v-if="$store.state.user.is_login">
         <el-avatar :size="50" :src="$store.state.user.photo" style="margin-right: 0.5rem;" />
         <span>{{$store.state.user.username}}</span>
     </el-menu-item>
-    <el-menu-item>
+    <el-menu-item  v-if="$store.state.user.is_login" @click="logout">
         退出
     </el-menu-item>
   </el-menu>
@@ -27,10 +27,12 @@
 <script>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
 export default {
     setup(){
         let router = useRouter();
+        let store = useStore();
         const activeIndex = ref('1');
         const handleSelect = (key, keyPath) => {
             console.log(key, keyPath)
@@ -39,9 +41,14 @@ export default {
             }
         }
 
+        const logout = () => {
+          store.dispatch("logout");
+        }
+
         return {
             activeIndex,
             handleSelect,
+            logout,
         }
     }
 }
