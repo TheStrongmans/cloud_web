@@ -12,10 +12,12 @@
 <script>
 import $ from 'jquery'
 import { ref } from 'vue'
+import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router'
 import BreadcrumbView from '@/components/BreadcrumbView.vue';
 import FolderView from '@/components/FolderView.vue'
 import FileView from '@/components/FileView.vue';
+
 
 export default {
   name: 'HomeView',
@@ -27,6 +29,7 @@ export default {
   setup() {
     let route = useRoute();
     let router = useRouter();
+    let store = useStore();
     let paths = ref();
     let breadcrumbs = ref([]);
     let folders = ref([]);
@@ -141,8 +144,10 @@ export default {
         type: "get",
         traditional: true,  
         data: data,
+        headers: {
+          "Authorization": "Bearer " + store.state.user.access,
+        },
         success(resp) {
-          console.log(resp) 
           if (resp.result === "success") {
             currentFileTypeId.value = resp.current_file_type_id;
             if (currentFileTypeId.value < 0) {

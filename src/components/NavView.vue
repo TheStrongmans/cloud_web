@@ -32,7 +32,7 @@ import { useStore } from 'vuex';
 export default {
     setup(){
         let router = useRouter();
-        let store = useStore();
+        let store = useStore(); 
         const activeIndex = ref('1');
         const handleSelect = (key, keyPath) => {
             console.log(key, keyPath)

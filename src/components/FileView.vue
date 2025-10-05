@@ -26,8 +26,6 @@ export default {
         let fileTypeSvg = file_type_svg.FILE_TYPE_SVG
 
         const get_folder_svg = (type) => {
-            console.log(type, "//////////");
-            
             return fileTypeSvg[fileTypeMapping[type] || 'unknown']
         }
 

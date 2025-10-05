@@ -47,8 +47,6 @@ export default {
                     error_message.value = "用户名或密码错误";
                 }    
             })
-            console.log(name.value, password.value);
-            
         }
         return {
             username,

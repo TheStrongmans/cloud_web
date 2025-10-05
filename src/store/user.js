@@ -1,7 +1,7 @@
 import $ from 'jquery'
 
 export default {
-  state: {  
+  state: {
     refresh: "",
     access: "",
     is_login: false,
@@ -21,7 +21,7 @@ export default {
     },
     updateAccess(state, access) {
       state.access = access;
-      
+
     },
     login(state, data) {
       state.refresh = data.refresh;
@@ -42,45 +42,43 @@ export default {
   actions: {
     login(context, data) {
       $.ajax({
-          url: "https://blog.superpea.top/api/token/",
-          type: "post",
-          data: {
-              username: data.username,
-              password: data.password,
-          },
-          success(resp) {
-            localStorage.setItem("cloud_jwt_refresh_token", resp.refresh);
-            context.commit("login", resp);
-            context.dispatch("startGetAccessTimer");
-            context.dispatch("getUserInfo");
-            data.success(resp);
-          },
-          error(resp) {
-              data.error(resp);
-          }
+        url: "https://blog.superpea.top/api/token/",
+        type: "post",
+        data: {
+          username: data.username,
+          password: data.password,
+        },
+        success(resp) {
+          localStorage.setItem("cloud_jwt_refresh_token", resp.refresh);
+          context.commit("login", resp);
+          context.dispatch("startGetAccessTimer");
+          context.dispatch("getUserInfo");
+          data.success(resp);
+        },
+        error(resp) {
+          data.error(resp);
+        }
       });
     },
     getUserInfo(context) {
-            console.log("userinfo ");
       $.ajax({
         url: "https://blog.superpea.top/cloud/user/getinfo/",
         type: "get",
         headers: {
-            "Authorization": "Bearer " + context.state.access,
+          "Authorization": "Bearer " + context.state.access,
         },
         success(resp) {
-          
+
           if (resp.result === "success") {
             context.commit("updateUserInfo", resp);
-            console.log("userinfo ", resp);
-            
+
           }
         }
       })
     },
     startGetAccessTimer(context) {
       context.commit("updateGetAccessTimer", (setInterval(() => {
-        context.dispathch("getAccess", {
+        context.dispatch("getAccess", {
           success(resp) {
             context.commit("updateAccess", resp.access);
           }
@@ -89,24 +87,24 @@ export default {
     },
     getAccess(context, data) {
       $.ajax({
-          url: "https://blog.superpea.top/api/token/refresh/",
-          type: "post",
-          data: {
-              refresh: context.state.refresh,
-          },
-          success(resp) {
-              data.success(resp);
-          },
-          error() {
-              context.dispatch("logout");
-              data.error();
-          }
+        url: "https://blog.superpea.top/api/token/refresh/",
+        type: "post",
+        data: {
+          refresh: context.state.refresh,
+        },
+        success(resp) {
+          data.success(resp);
+        },
+        error() {
+          context.dispatch("logout");
+          data.error();
+        }
       })
     },
     logout(context) {
       context.commit("logout");
       localStorage.removeItem("cloud_jwt_refresh_token");
-      if(context.state.getAccessTimer !== null) {
+      if (context.state.getAccessTimer !== null) {
         clearInterval(context.state.getAccessTimer);
         context.commit("updateGetAccessTimer", null);
       }

@@ -1,0 +1,15 @@
+{
+    "result": "success",
+    "apps": [
+        {
+            "img": "https://cdn.superpea.top/www/blog.jpg",
+            "name": "博客",
+            "url": "https://blog.superpea.top/"
+        },
+        {
+            "img": "https://cdn.superpea.top/www/blog.jpg",
+            "name": "Cloud·云",
+            "url": "https://cloud.superpea.top/"
+        }
+    ]
+}

@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/home/HomeView.vue'
 import store from '@/store/index'
+
+const HomeView = () => import('../views/home/HomeView.vue');
 
 const routes = [
   {
@@ -17,18 +18,18 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: () => import(/* webpackChunkName: "about" */ '../views/user/login/UserLoginView.vue')
+    component: () => import('../views/user/login/UserLoginView.vue')
   },
   {
     path: '/404',
     name: '404',
-    component: () => import(/* webpackChunkName: "about" */ '../views/error/NotFound.vue')
+    component: () => import('../views/error/NotFound.vue')
   },
-  {
-    path: '/test',
-    name: 'test',
-    component: () => import(/* webpackChunkName: "about" */ '../views/test/TestView.vue')
-  },
+  // {
+  //   path: '/test',
+  //   name: 'test',
+  //   component: () => import(/* webpackChunkName: "about" */ '../views/test/TestView.vue')
+  // },
 ]
 
 const router = createRouter({

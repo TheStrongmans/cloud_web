@@ -138,7 +138,7 @@
                         class="upload-demo"
                         drag
                         action="https://blog.superpea.top/cloud/file/upload/upload_file/" 
-                        headers=""
+                        :headers='{"Authorization": "Bearer " + store.state.user.access,}'
                         multiple
                         :data="get_upload_data"
                         :on-success="upload_success"
@@ -201,21 +201,22 @@ export default {
         }
         
         const to_folder = (folder) => {
-            console.log("to_f", folder, folder.type_id,folder.type_id < 0)
             let name = folder.name
                 let current_path = route.path == '/' ? '/home' : route.path;
                 router.push(current_path + '/' + name).then(() => {context.emit("refresh_page");});
-
         }
 
         const delete_folder = () => {
             error_message.value = "";
             $.ajax({
                 url: "https://blog.superpea.top/cloud/folder/delete_folder/",
-                type: "get",
+                type: "post",
                 data: {
                     "id": deleteFolder.value.id,
                     "type": deleteFolder.value.type,
+                },
+                headers: {
+                    "Authorization": "Bearer " + store.state.user.access,
                 },
                 success(resp) {
                     if (resp.result === "success") {
@@ -298,7 +299,6 @@ export default {
                 "id": folder.id,
                 "name": folder.name,
             }
-            console.log(data)
             $.ajax({
                 url: "https://blog.superpea.top/cloud/folder/update_folder_name/",
                 type: "post",
@@ -323,12 +323,10 @@ export default {
         }
 
         const upload_error = (resp) => {
-                console.log(resp);
             error_message.value = resp.result;
         }
 
         const upload_success = (resp) => {
-                console.log(resp, uploadData.value, currentFolderId.value);
             error_message.value = "";
             if (resp.result === "success") {
                 uploadFileVisible.value = false;
@@ -339,6 +337,7 @@ export default {
         }
 
         return {
+            store,
             folders,
             deleteFolder,
             deleteDialogVisible,
