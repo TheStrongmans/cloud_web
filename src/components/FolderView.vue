@@ -10,8 +10,8 @@
                 大小
                 </el-col> 
                 <el-col :span="7" v-if="$store.state.user.is_login">
-                <el-button type="warning" plain @click="newDialogVisible = true;"><el-icon  class="el-icon--left"><FolderAdd /></el-icon>新建文件夹</el-button>
-                <el-button type="success" plain @click="uploadFileVisible = true;"><el-icon  class="el-icon--left"><Upload /></el-icon>上传文件</el-button>
+                <el-button style="width: 50%;" type="warning" plain @click="newDialogVisible = true;"><el-icon  class="el-icon--left"><FolderAdd /></el-icon>新建文件夹</el-button>
+                <el-button style="width: 40%; margin-left: 4%;" type="success" plain @click="uploadFileVisible = true;"><el-icon  class="el-icon--left"><Upload /></el-icon>上传文件</el-button>
                 </el-col>
             </el-row>
             </div>
@@ -295,7 +295,7 @@ export default {
                 return ;
             }
             let data = {
-                "type_id": folder.type_id,
+                "type": folder.type,
                 "id": folder.id,
                 "name": folder.name,
             }
