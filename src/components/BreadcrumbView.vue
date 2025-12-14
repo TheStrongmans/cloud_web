@@ -1,5 +1,5 @@
 <template>
-    <div class="breadcrumb">
+    <div class="breadcrumb"  style="display: flex;align-items: center; /* 垂直居中 */">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item v-for="(breadcrumb, id) in breadcrumbs" :key="id">
             <a :href="breadcrumb.path">
@@ -32,9 +32,7 @@ export default {
 </script>
 
 <style scoped>
-
-
-.breadcrumb {
-  margin: 2rem 0 1rem 0;
+.breadcrumb a{
+  font-size: 1rem;
 }
 </style>

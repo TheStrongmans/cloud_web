@@ -3,7 +3,10 @@
     <!-- <el-card >
       <h2 style="margin: 0%;">搜索框</h2>
     </el-card> -->
-    <BreadcrumbView :breadcrumbsCountent="breadcrumbs"/>
+    <div class="head">
+      <BreadcrumbView :breadcrumbsCountent="breadcrumbs"/>
+      <ListModeView :listModeSelectCountent="listModeSelect" @updateListModeSecect="update_mode_select"/> 
+    </div>
     <FolderView v-if="currentFileTypeId < 0" :foldersCountent="folders" :currentFolderIdCountent="currentFolderId" @refresh_page="refresh_page"/>
     <FileView v-else :fileContent="file"/>
   </div>
@@ -17,6 +20,7 @@ import { useRoute, useRouter } from 'vue-router'
 import BreadcrumbView from '@/components/BreadcrumbView.vue';
 import FolderView from '@/components/FolderView.vue'
 import FileView from '@/components/FileView.vue';
+import ListModeView from '@/components/ListModeView.vue';
 
 
 export default {
@@ -25,6 +29,7 @@ export default {
     BreadcrumbView,
     FolderView,
     FileView,
+    ListModeView,
   },
   setup() {
     let route = useRoute();
@@ -36,6 +41,7 @@ export default {
     let currentFolderId = ref(-1);
     let currentFileTypeId = ref(-1);
     let file = ref();
+    let listModeSelect = ref("row");
 
     const get_paths = () => { 
       paths.value = ['home']
@@ -177,6 +183,10 @@ export default {
     }
     refresh_page();
 
+    const update_mode_select = (select) => {
+      listModeSelect.value = select;
+    }
+
     return {
       breadcrumbs,
       folders,
@@ -184,7 +194,9 @@ export default {
       currentFolderId,
       currentFileTypeId,
       file,
+      listModeSelect,
       refresh_page,
+      update_mode_select,
     }
   }
 }
@@ -196,4 +208,12 @@ export default {
   padding: 0 15%;
   box-sizing: border-box;
 }
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  padding: 2rem 0 1rem 0;
+  vertical-align: middle;
+}
+
 </style>

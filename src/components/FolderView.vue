@@ -1,19 +1,20 @@
 <template>
     <div class="folder">
-        <el-card>
+        <!-- 列表视图 -->
+        <el-card class="folder-row">
             <div class="folder-header">
-            <el-row  justify="space-between">
-                <el-col :span="14">
-                名称
-                </el-col>
-                <el-col :span="3">
-                大小
-                </el-col> 
-                <el-col :span="7" v-if="$store.state.user.is_login">
-                <el-button style="width: 50%;" type="warning" plain @click="newDialogVisible = true;"><el-icon  class="el-icon--left"><FolderAdd /></el-icon>新建文件夹</el-button>
-                <el-button style="width: 40%; margin-left: 4%;" type="success" plain @click="uploadFileVisible = true;"><el-icon  class="el-icon--left"><Upload /></el-icon>上传文件</el-button>
-                </el-col>
-            </el-row>
+                <el-row  justify="space-between">
+                    <el-col :span="14">
+                    名称
+                    </el-col>
+                    <el-col :span="3">
+                    大小
+                    </el-col> 
+                    <el-col :span="7" v-if="$store.state.user.is_login">
+                    <el-button style="width: 50%;" type="warning" plain @click="newDialogVisible = true;"><el-icon  class="el-icon--left"><FolderAdd /></el-icon>新建文件夹</el-button>
+                    <el-button style="width: 40%; margin-left: 4%;" type="success" plain @click="uploadFileVisible = true;"><el-icon  class="el-icon--left"><Upload /></el-icon>上传文件</el-button>
+                    </el-col>
+                </el-row>
             </div>
             <hr>    
             <div class="folder-item" v-for="(folder, id) in folders" :key="id" @click="to_folder(folder)">
@@ -68,6 +69,11 @@
             </el-row>
             </div>
         </el-card>
+
+        <!-- 块视图 -->
+         <el-card>
+            
+         </el-card>
 
         <!-- 删除文件弹窗 -->
         <div>
